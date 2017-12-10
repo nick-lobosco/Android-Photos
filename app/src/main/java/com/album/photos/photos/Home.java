@@ -15,7 +15,7 @@ import java.util.ArrayList;
 
 public class Home extends AppCompatActivity {
 
-    ArrayList<String> temp;
+    ArrayList<Album> temp;
     ArrayAdapter adapter;
     private String m_Text = "";
     ListView lv;
@@ -25,13 +25,13 @@ public class Home extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
-        temp = new ArrayList<String>();
-        temp.add("One");
-        temp.add("Two");
-        temp.add("Three");
+        temp = new ArrayList<Album>();
+        temp.add(new Album("One"));
+        temp.add(new Album("Two"));
+        temp.add(new Album("Three"));
 
         lv = (ListView) findViewById(R.id.listViewAlbums);
-        adapter = new ArrayAdapter<String>(this,android.R.layout.simple_list_item_1, temp);
+        adapter = new ArrayAdapter<Album>(this,android.R.layout.simple_list_item_1, temp);
         lv.setAdapter(adapter);
         lv.setSelection(0);
         lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -43,12 +43,13 @@ public class Home extends AppCompatActivity {
     }
 
     public void openAlbum(View view){
-        String str = (String)lv.getItemAtPosition(pos);
+        String str = lv.getItemAtPosition(pos).toString();
         System.out.println(str);
     }
     public void deleteAlbum(View view){
         //if(pos>=0 && pos<temp.size()){
             temp.remove(pos);
+            adapter.notifyDataSetChanged();
             lv.setSelection(pos);
             //pos =
     }
@@ -68,7 +69,7 @@ public class Home extends AppCompatActivity {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 m_Text = input.getText().toString();
-                temp.add(m_Text);
+                temp.add(new Album(m_Text));
                 adapter.notifyDataSetChanged();
             }
         });
@@ -82,5 +83,34 @@ public class Home extends AppCompatActivity {
         builder.show();
 
         //System.out.println("here");
+    }
+
+    public void renameAlbum(View view){
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Rename Album");
+
+        // Set up the input
+        final EditText input = new EditText(this);
+        // Specify the type of input expected; this, for example, sets the input as a password, and will mask the text
+        //input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+        builder.setView(input);
+
+        // Set up the buttons
+        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                m_Text = input.getText().toString();
+                temp.get(pos).changeName(m_Text);
+                adapter.notifyDataSetChanged();
+            }
+        });
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+
+        builder.show();
     }
 }
