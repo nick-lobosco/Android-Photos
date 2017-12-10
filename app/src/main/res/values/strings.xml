@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">Photo Album</string>
+    <string name="button_open">Open</string>
+    <string name="button_create">Create</string>
+    <string name="button_delete">Delete</string>
+    <string name="button_rename">Rename</string>
+</resources>
