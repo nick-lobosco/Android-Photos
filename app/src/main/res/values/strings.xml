@@ -4,4 +4,10 @@
     <string name="button_create">Create</string>
     <string name="button_delete">Delete</string>
     <string name="button_rename">Rename</string>
+    <string name="title_activity_photo_display">PhotoDisplay</string>
+    <string name="AddTag" />
+    <string name="addtag">Add Tag</string>
+    <string name="deleteTag">Delete Tag</string>
+    <string name="addLocation">Add Location</string>
+    <string name="addPerson">Add Person</string>
 </resources>

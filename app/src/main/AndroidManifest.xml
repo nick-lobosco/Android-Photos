@@ -16,7 +16,11 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".DisplayAlbum"></activity>
+        <activity android:name=".DisplayAlbum" />
+        <activity
+            android:name=".PhotoDisplay"
+            android:label="@string/title_activity_photo_display"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 
 </manifest>

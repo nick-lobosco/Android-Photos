@@ -18,8 +18,8 @@ public class DisplayAlbum extends AppCompatActivity {
         Album dispAlbum = (Album) intent.getSerializableExtra(EXTRA_ALBUM);
         setTitle("Browsing " + dispAlbum.getName());
 
-        TextView t = (TextView) findViewById(R.id.textView);
-        t.setText(dispAlbum.getName());
+//        TextView t = (TextView) findViewById(R.id.textView);
+//        t.setText(dispAlbum.getName());
 
 
 
