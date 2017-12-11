@@ -2,6 +2,10 @@ package com.album.photos.photos;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -9,10 +13,15 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 
+import java.io.FileNotFoundException;
+import java.net.URI;
 import java.util.ArrayList;
+
+import static com.album.photos.photos.DisplayAlbum.EXTRA_PHOTO_URI;
 
 public class PhotoDisplay extends AppCompatActivity {
 
@@ -21,12 +30,28 @@ public class PhotoDisplay extends AppCompatActivity {
     ListView lv;
     int pos;
     String value;
+    String photoURI;
+    ImageView iv;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_photo_display);
+        Intent intent = this.getIntent();
+        photoURI = intent.getStringExtra(EXTRA_PHOTO_URI);
+
+        iv = (ImageView) findViewById(R.id.imageView);
+        Bitmap bitmap;
+        try {
+            bitmap = BitmapFactory.decodeStream(getContentResolver().openInputStream(Uri.parse(photoURI)));
+            iv.setImageBitmap(bitmap);
+        } catch (FileNotFoundException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+
+
         tags = new ArrayList<Tag>();
         lv = (ListView) findViewById(R.id.tagLV);
         adapter = new ArrayAdapter<Tag>(this,android.R.layout.simple_list_item_1, tags);

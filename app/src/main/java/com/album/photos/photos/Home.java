@@ -1,5 +1,6 @@
 package com.album.photos.photos;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.v7.app.AlertDialog;
@@ -13,6 +14,11 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 
@@ -26,6 +32,8 @@ public class Home extends AppCompatActivity {
 
     public static final String EXTRA_ALBUM = "com.album.photos.photos.ALBUM";
     public static final String EXTRA_ALBUM_POSITION = "com.album.photos.photos.ALBUM_POSITION";
+
+    public static String fileName = "albums.ser";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,17 +57,58 @@ public class Home extends AppCompatActivity {
 
     private void initAlbums()
     {
-        temp.add(new Album("One"));
-        temp.add(new Album("Two"));
-        temp.add(new Album("Three"));
+//        temp.add(new Album("One"));
+//        temp.add(new Album("Two"));
+//        temp.add(new Album("Three"));
+        temp = null;
+        if(readFromFile(this) != null) {
+            temp = readFromFile(this);
+        }
+        else{
+            temp = new ArrayList<Album>();
+            temp.add(new Album("Stock"));
+        }
     }
 
     @Override
     protected void onStop(){
         super.onStop();
+        saveToFile(this);
 
-        //save data to disk
     }
+
+    public void saveToFile(Context context) {
+        try {
+            FileOutputStream fileOutputStream = context.openFileOutput(fileName, Context.MODE_PRIVATE);
+            ObjectOutputStream objectOutputStream = new ObjectOutputStream(fileOutputStream);
+            objectOutputStream.writeObject(temp);
+            objectOutputStream.close();
+            fileOutputStream.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    // Creates an object by reading it from a file
+    public static ArrayList<Album> readFromFile(Context context) {
+        ArrayList<Album> result = null;
+        try {
+            FileInputStream fileInputStream = context.openFileInput(fileName);
+            ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream);
+            result = (ArrayList<Album>) objectInputStream.readObject();
+            objectInputStream.close();
+            fileInputStream.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        catch (ClassNotFoundException e) {
+            e.printStackTrace();
+            return null;
+        }
+        return result;
+    }
+
 
     public void openAlbum(View view){
 
@@ -67,7 +116,8 @@ public class Home extends AppCompatActivity {
             Intent intent = new Intent(this, DisplayAlbum.class);
             intent.putExtra(EXTRA_ALBUM, (Album) lv.getItemAtPosition(pos));
             intent.putExtra(EXTRA_ALBUM_POSITION, pos);
-            startActivity(intent);
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+            startActivityForResult(intent,1234);
         }
 
     }
