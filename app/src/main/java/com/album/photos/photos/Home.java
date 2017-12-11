@@ -14,6 +14,7 @@ import android.widget.ListView;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Iterator;
 
 public class Home extends AppCompatActivity {
 
@@ -46,6 +47,21 @@ public class Home extends AppCompatActivity {
         });
     }
 
+    public ArrayList<Photo> search(View view){
+
+        ArrayList<Photo> matches = new ArrayList<Photo>();
+        Iterator<Album> i = temp.iterator();
+        while(i.hasNext()){
+            Album a = i.next();
+            Iterator<Photo> p = a.getPhotos().iterator();
+            while(p.hasNext()){
+                Photo photo = p.next();
+                if(photo.matches(tags))
+                    matches.add(photo);
+            }
+        }
+        return matches;
+    }
     public void openAlbum(View view){
         String str = lv.getItemAtPosition(pos).toString();
         System.out.println(str);

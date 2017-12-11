@@ -72,6 +72,19 @@ public class Photo implements Serializable{
 //            return true;
 //        return false;
 //    }
+    public boolean matches(ArrayList<Tag> searchTags){
+        Iterator<Tag> searchIterator = searchTags.iterator();
+        while(searchIterator.hasNext()){
+            Tag searchTag = searchIterator.next();
+            Iterator<Tag> matchIterator = this.tags.iterator();
+            while(matchIterator.hasNext()){
+                Tag matchTag = matchIterator.next();
+                if(!(matchTag.type.equals(searchTag.type)&&matchTag.value.startsWith(searchTag.value)))
+                    return false;
+            }
+        }
+        return true;
+    }
 
     public String toString(){
         return this.caption;
