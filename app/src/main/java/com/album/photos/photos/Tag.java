@@ -1,10 +1,12 @@
 package com.album.photos.photos;
 
+import java.io.Serializable;
+
 /**
  * Created by basis_000 on 12/10/2017.
  */
 
-public class Tag {
+public class Tag implements Serializable{
     String type;
     String value;
     public Tag(String type, String value){

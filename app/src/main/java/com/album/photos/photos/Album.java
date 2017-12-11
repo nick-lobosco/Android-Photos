@@ -1,5 +1,6 @@
 package com.album.photos.photos;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.ArrayList;
 
@@ -7,12 +8,12 @@ import java.util.ArrayList;
  * Created by basis_000 on 12/10/2017.
  */
 
-public class Album {
+public class Album implements Serializable{
     String name;
     ArrayList<Photo> photos;
     //ObservableList<Photo> photos;
-    LocalDate earliestDate;
-    LocalDate latestDate;
+//    LocalDate earliestDate;
+//    LocalDate latestDate;
 
     public Album(String name){
         this.name = name;
@@ -50,9 +51,9 @@ public class Album {
         return false;
     }
 
-    public String getDisplayInfo(){
-        return name + " (" + photos.size() + ")\n" + earliestDate.toString() + " - " + latestDate.toString();
-    }
+//    public String getDisplayInfo(){
+//        return name + " (" + photos.size() + ")\n" + earliestDate.toString() + " - " + latestDate.toString();
+//    }
 
     public void changeName(String newName){
         this.name = newName;

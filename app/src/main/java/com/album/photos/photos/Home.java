@@ -1,6 +1,7 @@
 package com.album.photos.photos;
 
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -11,6 +12,7 @@ import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 public class Home extends AppCompatActivity {
@@ -20,6 +22,8 @@ public class Home extends AppCompatActivity {
     private String m_Text = "";
     ListView lv;
     int pos;
+
+    public static final String EXTRA_ALBUM = "com.album.photos.photos.ALBUM";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,6 +49,11 @@ public class Home extends AppCompatActivity {
     public void openAlbum(View view){
         String str = lv.getItemAtPosition(pos).toString();
         System.out.println(str);
+
+        Intent intent = new Intent(this, DisplayAlbum.class);
+        intent.putExtra(EXTRA_ALBUM, (Album) lv.getItemAtPosition(pos));
+        startActivity(intent);
+
     }
     public void deleteAlbum(View view){
         //if(pos>=0 && pos<temp.size()){

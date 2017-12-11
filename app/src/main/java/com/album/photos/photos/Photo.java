@@ -1,6 +1,7 @@
 package com.album.photos.photos;
 
 import java.io.File;
+import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -12,10 +13,10 @@ import java.util.Iterator;
  * Created by basis_000 on 12/10/2017.
  */
 
-public class Photo {
+public class Photo implements Serializable{
     String caption;
     String path;
-    LocalDateTime capture;
+    //LocalDateTime capture;
     ArrayList<Tag> tags = new ArrayList<Tag>();
 
     //	public Photo(){
