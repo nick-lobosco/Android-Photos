@@ -11,28 +11,28 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 
 public class Home extends AppCompatActivity {
 
-    ArrayList<Album> temp;
+    static ArrayList<Album> temp = new ArrayList<Album>();
     ArrayAdapter adapter;
     private String m_Text = "";
     ListView lv;
     int pos;
 
     public static final String EXTRA_ALBUM = "com.album.photos.photos.ALBUM";
+    public static final String EXTRA_ALBUM_POSITION = "com.album.photos.photos.ALBUM_POSITION";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
-        temp = new ArrayList<Album>();
-        temp.add(new Album("One"));
-        temp.add(new Album("Two"));
-        temp.add(new Album("Three"));
+//        temp = new ArrayList<Album>();
+        initAlbums();
 
         lv = (ListView) findViewById(R.id.listViewAlbums);
         adapter = new ArrayAdapter<Album>(this,android.R.layout.simple_list_item_1, temp);
@@ -46,13 +46,29 @@ public class Home extends AppCompatActivity {
         });
     }
 
-    public void openAlbum(View view){
-        String str = lv.getItemAtPosition(pos).toString();
-        System.out.println(str);
 
-        Intent intent = new Intent(this, DisplayAlbum.class);
-        intent.putExtra(EXTRA_ALBUM, (Album) lv.getItemAtPosition(pos));
-        startActivity(intent);
+    private void initAlbums()
+    {
+        temp.add(new Album("One"));
+        temp.add(new Album("Two"));
+        temp.add(new Album("Three"));
+    }
+
+    @Override
+    protected void onStop(){
+        super.onStop();
+
+        //save data to disk
+    }
+
+    public void openAlbum(View view){
+
+        if(lv.getItemAtPosition(pos) != null) {
+            Intent intent = new Intent(this, DisplayAlbum.class);
+            intent.putExtra(EXTRA_ALBUM, (Album) lv.getItemAtPosition(pos));
+            intent.putExtra(EXTRA_ALBUM_POSITION, pos);
+            startActivity(intent);
+        }
 
     }
     public void deleteAlbum(View view){
