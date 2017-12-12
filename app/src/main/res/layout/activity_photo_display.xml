@@ -7,16 +7,6 @@
     tools:context="com.album.photos.photos.PhotoDisplay">
 
     <Button
-        android:id="@+id/button5"
-        android:layout_width="66dp"
-        android:layout_height="wrap_content"
-        android:onClick="next"
-        android:text="@string/next"
-        android:textSize="5pt"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toEndOf="@id/button_addPerson" />
-
-    <Button
         android:id="@+id/button_previous"
         android:layout_width="79dp"
         android:layout_height="wrap_content"
@@ -27,8 +17,8 @@
 
     <Button
         android:id="@+id/button_addPerson"
-        android:layout_width="75dp"
-        android:layout_height="wrap_content"
+        android:layout_width="103dp"
+        android:layout_height="57dp"
         android:onClick="addTag"
         android:text="@string/addPerson"
         android:textSize="5pt"
@@ -38,7 +28,7 @@
     <ImageView
         android:id="@+id/imageView"
         android:layout_width="392dp"
-        android:layout_height="333dp"
+        android:layout_height="360dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@android:drawable/alert_dark_frame" />
@@ -57,11 +47,15 @@
         android:id="@+id/button_deleteTag"
         android:layout_width="77dp"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:layout_marginTop="16dp"
         android:onClick="deleteTag"
         android:text="@string/deleteTag"
         android:textSize="5pt"
+
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toEndOf="@id/button_addLocation" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/button_addPerson" />
 
     <ListView
         android:id="@+id/tagLV"
@@ -73,5 +67,32 @@
         app:layout_constraintTop_toBottomOf="@+id/imageView">
 
     </ListView>
+
+    <Button
+        android:id="@+id/button4"
+        android:layout_width="90dp"
+        android:layout_height="35dp"
+        android:layout_marginBottom="16dp"
+        android:layout_marginStart="16dp"
+        android:onClick="prevImage"
+        android:text="Prev"
+        app:layout_constraintBottom_toTopOf="@+id/tagLV"
+        app:layout_constraintEnd_toStartOf="@+id/button5"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/imageView"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <Button
+        android:id="@+id/button5"
+        android:layout_width="90dp"
+        android:layout_height="35dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginStart="175dp"
+        android:onClick="nextImage"
+        android:text="Next"
+        app:layout_constraintBaseline_toBaselineOf="@+id/button4"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/button4" />
 
 </android.support.constraint.ConstraintLayout>

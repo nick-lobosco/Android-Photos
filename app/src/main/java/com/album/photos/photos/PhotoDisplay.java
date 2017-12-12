@@ -16,12 +16,15 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import java.io.FileNotFoundException;
 import java.net.URI;
 import java.util.ArrayList;
 
+import static com.album.photos.photos.DisplayAlbum.ALBUM_POSITION;
 import static com.album.photos.photos.DisplayAlbum.EXTRA_PHOTO_URI;
+import static com.album.photos.photos.DisplayAlbum.PHOTO_POSITION;
 
 public class PhotoDisplay extends AppCompatActivity {
 
@@ -35,13 +38,11 @@ public class PhotoDisplay extends AppCompatActivity {
     Album album;
     int index;
 
-    public void next(View view){
+    int albumPos;
+    int photoPos;
+    Album myAlb;
+    ArrayList<Photo> albumPhotos;
 
-    }
-
-    public void previous(View view){
-
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,8 +61,13 @@ public class PhotoDisplay extends AppCompatActivity {
             e.printStackTrace();
         }
 
+        albumPos = intent.getIntExtra(ALBUM_POSITION, 0);
+        photoPos = intent.getIntExtra(PHOTO_POSITION, 0);
+        myAlb = Home.temp.get(albumPos);
+        albumPhotos = myAlb.getPhotos();
 
-        tags = new ArrayList<Tag>();
+
+        tags = albumPhotos.get(photoPos).getTags();
         lv = (ListView) findViewById(R.id.tagLV);
         adapter = new ArrayAdapter<Tag>(this,android.R.layout.simple_list_item_1, tags);
         lv.setAdapter(adapter);
@@ -97,6 +103,65 @@ public class PhotoDisplay extends AppCompatActivity {
         });
 
         builder.show();
+    }
+
+    public void nextImage(View view){
+        if(photoPos+1 < albumPhotos.size()){
+            photoPos+=1;
+            setImage(photoPos);
+
+            Toast.makeText(this, ""+photoPos, Toast.LENGTH_SHORT).show();
+
+            tags = albumPhotos.get(photoPos).getTags();
+            lv = (ListView) findViewById(R.id.tagLV);
+            adapter = new ArrayAdapter<Tag>(this,android.R.layout.simple_list_item_1, tags);
+            lv.setAdapter(adapter);
+            lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                public void onItemClick(AdapterView<?> adapter, View v, int position, long id) {
+                    lv.setSelection(position);
+                    pos = position;
+                }
+            });
+
+
+        }
+    }
+
+    public void prevImage(View view){
+        if(photoPos>0){
+            photoPos-=1;
+            setImage(photoPos);
+
+            Toast.makeText(this, ""+photoPos, Toast.LENGTH_SHORT).show();
+
+            tags = albumPhotos.get(photoPos).getTags();
+            lv = (ListView) findViewById(R.id.tagLV);
+            adapter = new ArrayAdapter<Tag>(this,android.R.layout.simple_list_item_1, tags);
+            lv.setAdapter(adapter);
+            lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                public void onItemClick(AdapterView<?> adapter, View v, int position, long id) {
+                    lv.setSelection(position);
+                    pos = position;
+                }
+            });
+
+
+        }
+
+    }
+
+    private void setImage(int position){
+        photoURI = albumPhotos.get(position).getPath();
+
+        iv = (ImageView) findViewById(R.id.imageView);
+        Bitmap bitmap;
+        try {
+            bitmap = BitmapFactory.decodeStream(getContentResolver().openInputStream(Uri.parse(photoURI)));
+            iv.setImageBitmap(bitmap);
+        } catch (FileNotFoundException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
     }
 
     public void deleteTag(View view){

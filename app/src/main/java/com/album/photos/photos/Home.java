@@ -166,6 +166,7 @@ public class Home extends AppCompatActivity {
     public void openAlbum(View view){
 
         if(lv.getItemAtPosition(pos) != null) {
+            Toast.makeText(this, "Opening album", Toast.LENGTH_SHORT).show();
             Intent intent = new Intent(this, DisplayAlbum.class);
             intent.putExtra(EXTRA_ALBUM, (Album) lv.getItemAtPosition(pos));
             intent.putExtra(EXTRA_ALBUM_POSITION, pos);
@@ -176,9 +177,13 @@ public class Home extends AppCompatActivity {
     }
     public void deleteAlbum(View view){
         //if(pos>=0 && pos<temp.size()){
+        try {
             temp.remove(pos);
             adapter.notifyDataSetChanged();
             lv.setSelection(pos);
+        }
+        catch (Exception e){}
+
             //pos =
     }
 
