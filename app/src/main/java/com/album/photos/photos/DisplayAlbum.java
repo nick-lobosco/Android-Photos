@@ -5,6 +5,8 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.media.ThumbnailUtils;
 import android.net.Uri;
 import android.provider.MediaStore;
 import android.provider.SyncStateContract;
@@ -39,6 +41,9 @@ public class DisplayAlbum extends AppCompatActivity {
     public static String EXTRA_PHOTO_URI = "PHOTO_URI";
     public static final int MY_PERMISSIONS_REQUEST_READ_EXTERNAL = 100;
 
+    public static final String ALBUM_POSITION = "ALBUM_POSITION";
+    public static final String PHOTO_POSITION = "PHOTO_POSITION";
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,7 +59,7 @@ public class DisplayAlbum extends AppCompatActivity {
 
 
         lv = (ListView) findViewById(R.id.listView);
-        adapter = new ArrayAdapter<Photo>(this, android.R.layout.simple_list_item_1, albumPhotos);
+        adapter = new CustomListAdapter(this, albumPhotos);
         lv.setAdapter(adapter);
         lv.setSelection(0);
         lv.setOnItemClickListener(new AdapterView.OnItemClickListener(){
@@ -65,11 +70,9 @@ public class DisplayAlbum extends AppCompatActivity {
             }
         });
 
-//        TextView t = (TextView) findViewById(R.id.textView);
-//        t.setText(dispAlbum.getName());
         checkPermission();
-
     }
+
 
     private void checkPermission(){
         if (ContextCompat.checkSelfPermission(this,
@@ -98,6 +101,8 @@ public class DisplayAlbum extends AppCompatActivity {
             }
         }
     }
+
+
     @Override
     public void onRequestPermissionsResult(int requestCode,
                                            String permissions[], int[] grantResults) {
@@ -128,6 +133,7 @@ public class DisplayAlbum extends AppCompatActivity {
                 android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
         if (getPhotoIntent.resolveActivity(getPackageManager()) != null && havePerm) {
             Toast.makeText(this, "Please Choose Image", Toast.LENGTH_LONG).show();
+            getPhotoIntent.setType("image/*");
             startActivityForResult(getPhotoIntent, REQUEST_IMAGE);
         }
     }
@@ -159,6 +165,8 @@ public class DisplayAlbum extends AppCompatActivity {
         try {
             Intent intent = new Intent(this, PhotoDisplay.class);
             intent.putExtra(EXTRA_PHOTO_URI, albumPhotos.get(pos).getPath());
+            intent.putExtra(ALBUM_POSITION, albumPos);
+            intent.putExtra(PHOTO_POSITION, pos);
             startActivity(intent);
         }
         catch (Exception e){}
@@ -166,31 +174,50 @@ public class DisplayAlbum extends AppCompatActivity {
 
 
 
-    public class CustomList extends ArrayAdapter<String> {
+    public class CustomListAdapter extends ArrayAdapter<Photo> {
 
         private final Activity context;
-        private final String[] web;
-        private final Integer[] imageId;
-        public CustomList(Activity context,
-                          String[] web, Integer[] imageId) {
-            super(context, R.layout.list_single, web);
-            this.context = context;
-            this.web = web;
-            this.imageId = imageId;
+        private final ArrayList<Photo> items;
 
+        public CustomListAdapter(Activity context, ArrayList<Photo> items) {
+            super(context, R.layout.mylist, items);
+            // TODO Auto-generated constructor stub
+
+            this.context=context;
+            this.items = items;
         }
-        @Override
-        public View getView(int position, View view, ViewGroup parent) {
-            LayoutInflater inflater = context.getLayoutInflater();
-            View rowView= inflater.inflate(R.layout.list_single, null, true);
-            TextView txtTitle = (TextView) rowView.findViewById(R.id.txt);
 
-            ImageView imageView = (ImageView) rowView.findViewById(R.id.img);
-            txtTitle.setText(web[position]);
+        public View getView(int position,View view,ViewGroup parent) {
+            LayoutInflater inflater=context.getLayoutInflater();
+            View rowView=inflater.inflate(R.layout.mylist, null,true);
 
-            imageView.setImageResource(imageId[position]);
+            ImageView imageView = (ImageView) rowView.findViewById(R.id.icon);
+            TextView extratxt = (TextView) rowView.findViewById(R.id.Itemname);
+
+            String photoURI = items.get(position).getPath();
+
+            Bitmap bitmap;
+            try {
+                bitmap = ThumbnailUtils.extractThumbnail(
+                        BitmapFactory.decodeStream(getContentResolver().openInputStream(Uri.parse(photoURI))),
+                        128, 128);
+//                    bitmap = MediaStore.Images.Thumbnails.getThumbnail(
+//                        getContentResolver(), Uri.parse(photoURI),
+//                        MediaStore.Images.Thumbnails.MINI_KIND,
+//                        (BitmapFactory.Options) null );
+
+
+                imageView.setImageBitmap(bitmap);
+            }
+            catch (Exception e){}
+
+//            imageView.setImageResource(imgid[position]);
+            extratxt.setText(photoURI.substring(photoURI.lastIndexOf('/')+1));
+
+
             return rowView;
-        }
+
+        };
     }
 
 

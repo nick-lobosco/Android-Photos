@@ -21,7 +21,9 @@ import java.io.FileNotFoundException;
 import java.net.URI;
 import java.util.ArrayList;
 
+import static com.album.photos.photos.DisplayAlbum.ALBUM_POSITION;
 import static com.album.photos.photos.DisplayAlbum.EXTRA_PHOTO_URI;
+import static com.album.photos.photos.DisplayAlbum.PHOTO_POSITION;
 
 public class PhotoDisplay extends AppCompatActivity {
 
@@ -32,6 +34,9 @@ public class PhotoDisplay extends AppCompatActivity {
     String value;
     String photoURI;
     ImageView iv;
+
+    int albumPos;
+    int photoPos;
 
 
     @Override
@@ -51,8 +56,10 @@ public class PhotoDisplay extends AppCompatActivity {
             e.printStackTrace();
         }
 
+        albumPos = intent.getIntExtra(ALBUM_POSITION, 0);
+        photoPos = intent.getIntExtra(PHOTO_POSITION, 0);
 
-        tags = new ArrayList<Tag>();
+        tags = Home.temp.get(albumPos).getPhotos().get(photoPos).getTags();
         lv = (ListView) findViewById(R.id.tagLV);
         adapter = new ArrayAdapter<Tag>(this,android.R.layout.simple_list_item_1, tags);
         lv.setAdapter(adapter);

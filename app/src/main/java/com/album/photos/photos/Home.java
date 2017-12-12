@@ -113,6 +113,7 @@ public class Home extends AppCompatActivity {
     public void openAlbum(View view){
 
         if(lv.getItemAtPosition(pos) != null) {
+            Toast.makeText(this, "Opening album", Toast.LENGTH_SHORT).show();
             Intent intent = new Intent(this, DisplayAlbum.class);
             intent.putExtra(EXTRA_ALBUM, (Album) lv.getItemAtPosition(pos));
             intent.putExtra(EXTRA_ALBUM_POSITION, pos);
