@@ -124,9 +124,13 @@ public class Home extends AppCompatActivity {
     }
     public void deleteAlbum(View view){
         //if(pos>=0 && pos<temp.size()){
+        try {
             temp.remove(pos);
             adapter.notifyDataSetChanged();
             lv.setSelection(pos);
+        }
+        catch (Exception e){}
+
             //pos =
     }
 
