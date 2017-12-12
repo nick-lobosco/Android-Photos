@@ -24,6 +24,6 @@ public class Tag implements Serializable{
     }
 
     public String toString(){
-        return "Type: " + type + ", Value: " + value;
+        return type + ": " + value;
     }
 }

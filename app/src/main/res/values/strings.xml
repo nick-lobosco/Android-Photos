@@ -5,10 +5,14 @@
     <string name="button_delete">Delete</string>
     <string name="button_rename">Rename</string>
     <string name="title_activity_photo_display">PhotoDisplay</string>
-    <string name="AddTag" />
     <string name="addtag">Add Tag</string>
     <string name="deleteTag">Delete Tag</string>
     <string name="addLocation">Add Location</string>
     <string name="addPerson">Add Person</string>
     <string name="search">Search</string>
+    <string name="addPhoto">Add</string>string>
+    <string name="deletePhoto">Delete</string>string>
+    <string name="viewPhoto">View</string>
+    <string name="previous">Previous</string>
+    <string name="next">Next</string>string>
 </resources>

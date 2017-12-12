@@ -87,7 +87,7 @@ public class Photo implements Serializable{
     }
 
     public String toString(){
-        return this.caption;
+        return this.path;
     }
     public String getCaption(){
         return this.caption==null ? "" : this.caption;
