@@ -2,6 +2,8 @@ package com.album.photos.photos;
 
 import android.Manifest;
 import android.app.Activity;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -12,6 +14,7 @@ import android.provider.MediaStore;
 import android.provider.SyncStateContract;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -19,16 +22,21 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 
 import static com.album.photos.photos.Home.EXTRA_ALBUM;
 
 public class DisplayAlbum extends AppCompatActivity {
+    Context context = this;
     static final int REQUEST_IMAGE = 1;
     ListView lv;
     ArrayList<Photo> albumPhotos;
@@ -43,6 +51,7 @@ public class DisplayAlbum extends AppCompatActivity {
 
     public static final String ALBUM_POSITION = "ALBUM_POSITION";
     public static final String PHOTO_POSITION = "PHOTO_POSITION";
+    public static final String SEARCH = "SEARCH";
 
 
     @Override
@@ -73,6 +82,61 @@ public class DisplayAlbum extends AppCompatActivity {
         checkPermission();
     }
 
+    protected void onStop(){
+        super.onStop();
+        saveToFile(this);
+
+    }
+
+    public void saveToFile(Context context) {
+        try {
+            FileOutputStream fileOutputStream = context.openFileOutput(Home.fileName, Context.MODE_PRIVATE);
+            ObjectOutputStream objectOutputStream = new ObjectOutputStream(fileOutputStream);
+            objectOutputStream.writeObject(Home.temp);
+            objectOutputStream.close();
+            fileOutputStream.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+    public void movePhoto(View view){
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Move Photo");
+        final EditText input = new EditText(this);
+        builder.setView(input);
+        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which){
+                String name = input.getText().toString();
+                int index = Home.temp.indexOf(new Album(name));
+                if(index==-1){
+                    AlertDialog alertDialog = new AlertDialog.Builder(context).create();
+                    alertDialog.setTitle("Alert");
+                    alertDialog.setMessage("Album Name Does Not Exist");
+                    alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                            new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int which) {
+                                    dialog.dismiss();
+                                }
+                            });
+                    alertDialog.show();
+                }
+                else{
+                    Home.temp.get(index).addPhoto(dispAlbum.getPhotos().get(pos));
+                    dispAlbum.getPhotos().remove(pos);
+                }
+                adapter.notifyDataSetChanged();
+            }
+        });
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+
+        builder.show();
+    }
 
     private void checkPermission(){
         if (ContextCompat.checkSelfPermission(this,
@@ -165,6 +229,7 @@ public class DisplayAlbum extends AppCompatActivity {
     public void viewPhoto(View view){
         try {
             Intent intent = new Intent(this, PhotoDisplay.class);
+            intent.putExtra(SEARCH, false);
             intent.putExtra(EXTRA_PHOTO_URI, albumPhotos.get(pos).getPath());
             intent.putExtra(ALBUM_POSITION, albumPos);
             intent.putExtra(PHOTO_POSITION, pos);

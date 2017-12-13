@@ -32,6 +32,8 @@ public class Home extends AppCompatActivity {
     ListView lv;
     int pos;
     boolean searched = false;
+    static Album searchAlbum;
+    Context context = this;
 
     public static final String EXTRA_ALBUM = "com.album.photos.photos.ALBUM";
     public static final String EXTRA_ALBUM_POSITION = "com.album.photos.photos.ALBUM_POSITION";
@@ -80,8 +82,10 @@ public class Home extends AppCompatActivity {
                 String location = locationBox.getText().toString();
                 String person = personBox.getText().toString();
                 ArrayList<Tag> tags = new ArrayList<Tag>();
-                tags.add(new Tag("Location", location));
-                tags.add(new Tag("Person", person));
+                if(!location.equals(""))
+                    tags.add(new Tag("Location", location));
+                if(!person.equals(""))
+                    tags.add(new Tag("Person", person));
                 ArrayList<Photo> matches = new ArrayList<Photo>();
                 Iterator<Album> i = temp.iterator();
                 while (i.hasNext()) {
@@ -93,7 +97,31 @@ public class Home extends AppCompatActivity {
                             matches.add(photo);
                     }
                 }
-
+                searchAlbum = new Album("matches", matches);
+                if(matches.size()==0){
+                    AlertDialog alertDialog = new AlertDialog.Builder(context).create();
+                    alertDialog.setTitle("Alert");
+                    alertDialog.setMessage("There Are No Matching Photos");
+                    alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                            new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int which) {
+                                    dialog.dismiss();
+                                }
+                            });
+                    alertDialog.show();
+                }
+                else {
+                    try {
+                        Intent intent = new Intent(context, PhotoDisplay.class);
+                        intent.putExtra("SEARCH", true);
+                        intent.putExtra("PHOTO_URI", matches.get(0).getPath());
+                        //intent.putExtra(ALBUM_POSITION, albumPos);
+                        intent.putExtra("PHOTO_POSITION", 0);
+                        startActivity(intent);
+                    } catch (Exception e) {
+                        System.out.println("EXCEPTION: " + e);
+                    }
+                }
                 //load photo display here
             }
         });
@@ -162,7 +190,6 @@ public class Home extends AppCompatActivity {
         return result;
     }
 
-
     public void openAlbum(View view){
 
         if(lv.getItemAtPosition(pos) != null) {
@@ -207,6 +234,18 @@ public class Home extends AppCompatActivity {
                     temp.add(new Album(m_Text));
                     adapter.notifyDataSetChanged();
                 }
+                else{
+                    AlertDialog alertDialog = new AlertDialog.Builder(context).create();
+                    alertDialog.setTitle("Alert");
+                    alertDialog.setMessage("Album Name Taken");
+                    alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                            new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int which) {
+                                    dialog.dismiss();
+                                }
+                            });
+                    alertDialog.show();
+                }
             }
         });
         builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -239,7 +278,18 @@ public class Home extends AppCompatActivity {
                 if (!temp.contains(new Album(m_Text))) {
                     temp.get(pos).changeName(m_Text);
                     adapter.notifyDataSetChanged();
-
+                }
+                else{
+                    AlertDialog alertDialog = new AlertDialog.Builder(context).create();
+                    alertDialog.setTitle("Alert");
+                    alertDialog.setMessage("Album Name Taken");
+                    alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                            new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int which) {
+                                    dialog.dismiss();
+                                }
+                            });
+                    alertDialog.show();
                 }
             }
         });

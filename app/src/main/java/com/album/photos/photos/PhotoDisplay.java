@@ -19,12 +19,16 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.net.URI;
 import java.util.ArrayList;
 
 import static com.album.photos.photos.DisplayAlbum.ALBUM_POSITION;
 import static com.album.photos.photos.DisplayAlbum.EXTRA_PHOTO_URI;
 import static com.album.photos.photos.DisplayAlbum.PHOTO_POSITION;
+import static com.album.photos.photos.DisplayAlbum.SEARCH;
 
 public class PhotoDisplay extends AppCompatActivity {
 
@@ -46,11 +50,12 @@ public class PhotoDisplay extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        System.out.println("ggdsgsd");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_photo_display);
         Intent intent = this.getIntent();
         photoURI = intent.getStringExtra(EXTRA_PHOTO_URI);
-
+        System.out.println("PHOTOURI: " + photoURI);
         iv = (ImageView) findViewById(R.id.imageView);
         Bitmap bitmap;
         try {
@@ -61,11 +66,18 @@ public class PhotoDisplay extends AppCompatActivity {
             e.printStackTrace();
         }
 
-        albumPos = intent.getIntExtra(ALBUM_POSITION, 0);
-        photoPos = intent.getIntExtra(PHOTO_POSITION, 0);
-        myAlb = Home.temp.get(albumPos);
-        albumPhotos = myAlb.getPhotos();
-
+        boolean search = intent.getBooleanExtra(SEARCH, false);
+        if(search){
+            myAlb = Home.searchAlbum;
+            albumPhotos = myAlb.getPhotos();
+            photoPos = 0;
+        }
+        else {
+            albumPos = intent.getIntExtra(ALBUM_POSITION, 0);
+            photoPos = intent.getIntExtra(PHOTO_POSITION, 0);
+            myAlb = Home.temp.get(albumPos);
+            albumPhotos = myAlb.getPhotos();
+        }
 
         tags = albumPhotos.get(photoPos).getTags();
         lv = (ListView) findViewById(R.id.tagLV);
@@ -77,6 +89,24 @@ public class PhotoDisplay extends AppCompatActivity {
                 pos = position;
             }
         });
+    }
+
+    protected void onStop(){
+        super.onStop();
+        saveToFile(this);
+
+    }
+
+    public void saveToFile(Context context) {
+        try {
+            FileOutputStream fileOutputStream = context.openFileOutput(Home.fileName, Context.MODE_PRIVATE);
+            ObjectOutputStream objectOutputStream = new ObjectOutputStream(fileOutputStream);
+            objectOutputStream.writeObject(Home.temp);
+            objectOutputStream.close();
+            fileOutputStream.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public void addTag(View view){

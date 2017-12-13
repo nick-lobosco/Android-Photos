@@ -10,6 +10,7 @@
         android:id="@+id/button_search"
         android:layout_width="78dp"
         android:layout_height="wrap_content"
+        android:onClick="search"
         android:text="@string/search"
         android:textSize="5pt"
         app:layout_constraintBaseline_toBaselineOf="@+id/button_rename"
